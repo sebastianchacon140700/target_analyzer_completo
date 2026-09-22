@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CTU | Target Analyzer</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="./resources/icon.png">
+</head>
+<body>
+    <div class="bunker-container">
+        <header class="consola-input">
+            <span class="prompt-text">[TARGET_URL]:</span>
+            <input type="text" id="target-url" placeholder="Ingrese dominio objetivo ..." autocomplete="off">
+          <button id="btn-scan">
+                <i data-lucide="search"></i>
+                <span>[INICIAR_ESCANEO]</span>
+          </button>
+        </header>
+        <main class="grid-paneles">
+            <section class="panel " id="panel-vista">
+                <div class="panel-header">
+                    <div class="icon-titulo-panel">
+                        <div class="icono-panel">
+                            <i data-lucide="eye"></i>
+                        </div>
+                        <h2 class="panel-titulo">PANEL 1: [VISTA]</h2>
+                    </div>
+                    <button class="btn-toggle-expand"><i data-lucide="maximize-2"></i></button>
+                    </div>
+                <div class="contenido-panel scroll-activo">Esperando objetivo ...</div>
+            </section>
+            <section class="panel " id="panel-tech">
+                <div class="panel-header">
+                    <div class="icon-titulo-panel">
+                        <div class="icono-panel">
+                            <i data-lucide="cpu"></i>
+                        </div>
+                        <h2 class="panel-titulo">PANEL 2: [TECNOLOGÍA]</h2>
+                    </div>
+                    <button class="btn-toggle-expand"><i data-lucide="maximize-2"></i></button>
+
+                </div>
+                <div class="contenido-panel scroll-activo">Esperando objetivo ...</div>
+            </section>
+            <section class="panel " id="panel-enlaces">
+                <div class="panel-header">
+                    <div class="icon-titulo-panel">
+                        <div class="icono-panel">
+                            <i data-lucide="link"></i>
+                        </div>
+                        <h2 class="panel-titulo">PANEL 3: [MAPA_ENLACES]</h2>
+                    </div>
+                    <button class="btn-toggle-expand"><i data-lucide="maximize-2"></i></button>
+                </div>
+                <div class="contenido-panel scroll-activo">Esperando objetivo ...</div>
+            </section>
+            <section class="panel " id="panel-metricas">
+                <div class="panel-header">
+                    <div class="icon-titulo-panel">
+
+                        <div class="icono-panel">
+                            <i data-lucide="chart-column"></i>
+                        </div>
+                        <h2 class="panel-titulo">PANEL 4: [MÉTRICAS]</h2>
+                    </div>
+                    <button class="btn-toggle-expand"><i data-lucide="maximize-2"></i></button>
+                </div>
+                <div class="contenido-panel scroll-activo">Esperando objetivo ...</div>
+            </section>
+        </main>
+    </div>
+   <div id="visor-tactico" class="visor-oculto">
+        <span class="cerrar-visor">
+            [X] CERRAR VISOR
+        </span>
+        <div class="contenedor-imagen">
+
+            <button id="btn-anterior" class="btn-nav-img">
+                ◀
+            </button>
+
+            <div class="marco-imagen">
+                <img id="imagen-ampliada">
+            </div>
+
+            <button id="btn-siguiente" class="btn-nav-img">
+                ▶
+            </button>
+
+        </div>
+        <div id="contador-imagen">
+            [1 / 1]
+        </div>
+    </div> 
+    <div id="mapa-bunker"></div>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>

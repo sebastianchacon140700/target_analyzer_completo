@@ -1,0 +1,30 @@
+{
+  "name": "frontend-target-analyzer",
+  "version": "1.0.0",
+  "description": "Sistema Full-Stack táctico de análisis y telemetría web usando Express, Puppeteer y Cheerio",
+  "main": "server/receptor.js",
+  "scripts": {
+    "start": "node server/receptor.js",
+    "dev": "node server/receptor.js"
+  },
+  "keywords": [
+    "puppeteer",
+    "cheerio",
+    "express",
+    "target-analyzer",
+    "tactical-ui"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cheerio": "^1.2.0",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "express-rate-limit": "^8.5.2",
+    "helmet": "^8.2.0",
+    "joi": "^18.2.3",
+    "morgan": "^1.11.0",
+    "node-cache": "^5.1.2",
+    "puppeteer": "^24.15.0"
+  }
+}
