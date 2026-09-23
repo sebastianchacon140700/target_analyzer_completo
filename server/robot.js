@@ -9,6 +9,43 @@ function esperar(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+// Función para forzar lazy-loading haciendo scroll automático
+async function autoScroll(pagina) {
+    // Envolvemos el evaluar en un Promise.race desde Node.js (Tiempo límite estricto absoluto)
+    await Promise.race([
+        pagina.evaluate(async () => {
+            await new Promise((resolve) => {
+                let alturaTotal = 0;
+                const distancia = 300;
+                let limitesScroll = 30;
+                let scrollsRealizados = 0;
+                
+                // Reloj de arena interno en el navegador: Si pasan 10s, abortamos y continuamos
+                const timeoutInterno = setTimeout(() => {
+                    clearInterval(temporizador);
+                    resolve();
+                }, 10000);
+                
+                const temporizador = setInterval(() => {
+                    const alturaDocumento = document.body.scrollHeight;
+                    window.scrollBy(0, distancia);
+                    alturaTotal += distancia;
+                    scrollsRealizados++;
+
+                    if (alturaTotal >= alturaDocumento - window.innerHeight || scrollsRealizados >= limitesScroll) {
+                        clearTimeout(timeoutInterno);
+                        clearInterval(temporizador);
+                        window.scrollTo(0, 0);
+                        resolve();
+                    }
+                }, 300);
+            });
+        }),
+        // Si el navegador se congela por completo, Node.js corta el cable a los 12 segundos
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout de seguridad de Node.js activado')), 12000))
+    ]);
+}
+
 /**
  * Motor principal de análisis web usando Puppeteer y Cheerio.
  * @param {string} url - URL del sitio a analizar
@@ -62,8 +99,15 @@ async function analizarSitio(url) {
             console.warn(`[ROBOT WARN] Carga parcial para ${url}: ${e.message}`);
         }
 
-        // Espera extra para que JS del sitio se ejecute tras la carga
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        // >>> NUEVO COMPORTAMIENTO: Hacer scroll para forzar lazy-loading <<<
+        try {
+            await autoScroll(pagina);
+        } catch (e) {
+            console.warn(`[ROBOT WARN] Fallo el auto-scroll: ${e.message}`);
+        }
+
+        // Espera extra corta para que se terminen de acomodar las últimas imágenes
+        await esperar(1000);
 
         // Obtener HTML con timeout seguro
         let html = '';
