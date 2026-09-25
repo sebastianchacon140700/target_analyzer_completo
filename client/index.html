@@ -17,6 +17,10 @@
                 <i data-lucide="search"></i>
                 <span>[INICIAR_ESCANEO]</span>
           </button>
+          <button id="btn-pdf" style="display: none;">
+                <i data-lucide="file-down"></i>
+                <span>[EXPORTAR_PDF]</span>
+          </button>
         </header>
         <main class="grid-paneles">
             <section class="panel " id="panel-vista">
@@ -71,6 +75,54 @@
             </section>
         </main>
     </div>
+    
+    <!-- Molde Oculto para Reporte PDF Corporativo -->
+    <div id="contenedor-oculto-pdf" style="display: none;">
+        <div id="plantilla-reporte-pdf" class="reporte-ejecutivo">
+            <header class="reporte-header">
+                <div class="logo-text">CTU INTELLIGENCE</div>
+                <h1>REPORTE DE AUDITORÍA WEB</h1>
+                <div class="meta-info">
+                    <p><strong>Objetivo:</strong> <span id="pdf-url">---</span></p>
+                    <p><strong>Fecha de Emisión:</strong> <span id="pdf-fecha">---</span></p>
+                </div>
+            </header>
+            
+            <section class="reporte-seccion">
+                <h2>1. Resumen Ejecutivo</h2>
+                <p><strong>Título de la Página:</strong> <span id="pdf-titulo">---</span></p>
+                <p><strong>Descripción Meta:</strong> <span id="pdf-descripcion">---</span></p>
+                <p><strong>Idioma Primario:</strong> <span id="pdf-idioma">---</span></p>
+            </section>
+            
+            <section class="reporte-seccion">
+                <h2>2. Resultados de Extracción</h2>
+                <ul class="metricas-lista">
+                    <li>Imágenes Capturadas: <strong id="pdf-imagenes">0</strong></li>
+                    <li>Enlaces Detectados: <strong id="pdf-enlaces">0</strong></li>
+                    <li>Scripts: <strong id="pdf-scripts">0</strong></li>
+                    <li>Hojas de Estilo (CSS): <strong id="pdf-css">0</strong></li>
+                    <li>Formularios: <strong id="pdf-forms">0</strong></li>
+                </ul>
+            </section>
+
+            <section class="reporte-seccion">
+                <h2>3. Stack Tecnológico (Reconocimiento)</h2>
+                <p>Se ha detectado la presencia de las siguientes tecnologías y plataformas en el objetivo:</p>
+                <div id="pdf-tech" class="tech-lista">---</div>
+            </section>
+
+            <section class="reporte-seccion">
+                <h2>4. Calificación de SEO Básica</h2>
+                <div class="seo-score">Puntuación: <span id="pdf-seo">0</span>/100</div>
+            </section>
+            
+            <footer class="reporte-footer">
+                <p>Generado automáticamente por Target Analyzer | Documento Confidencial</p>
+            </footer>
+        </div>
+    </div>
+
    <div id="visor-tactico" class="visor-oculto">
         <span class="cerrar-visor">
             [X] CERRAR VISOR
@@ -98,6 +150,7 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="main.js"></script>
 </body>
 </html>

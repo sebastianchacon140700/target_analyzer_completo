@@ -83,7 +83,7 @@ body {
 }
 
 
-#btn-scan {
+#btn-scan, #btn-pdf {
     padding: 10px 25px;
     background: transparent;
     color: var(--color-terminal);
@@ -98,7 +98,13 @@ body {
     transition: 0.2s;
 }
 
-#btn-scan:hover {
+#btn-pdf {
+    margin-left: 10px;
+    text-shadow: 0 0 5px var(--color-terminal);
+    box-shadow: 0 0 8px rgba(0, 240, 255, 0.2) inset;
+}
+
+#btn-scan:hover, #btn-pdf:hover {
     background: var(--color-terminal);
     color: var(--fondo-absoluto);
 }
@@ -793,4 +799,116 @@ body {
     #panel-vista.expandido .contenido-panel > .reveal-item:first-child {
         height: 32vh !important;
     }
+}
+
+/* =========================================
+   ESTILOS PARA REPORTE PDF (Oculto en UI)
+   ========================================= */
+.reporte-ejecutivo {
+    background-color: #ffffff;
+    color: #333333;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    padding: 30px;
+    width: 794px; /* Ancho A4 aproximado */
+    box-sizing: border-box;
+}
+
+.reporte-header {
+    border-bottom: 3px solid #1a365d;
+    padding-bottom: 15px;
+    margin-bottom: 25px;
+}
+
+.reporte-header .logo-text {
+    font-weight: 900;
+    font-size: 1.2rem;
+    color: #1a365d;
+    letter-spacing: 2px;
+}
+
+.reporte-header h1 {
+    font-size: 24px;
+    color: #1a365d;
+    margin: 10px 0;
+}
+
+.reporte-header .meta-info {
+    font-size: 14px;
+    color: #555;
+}
+
+.reporte-header .meta-info p {
+    margin: 5px 0;
+}
+
+.reporte-seccion {
+    margin-bottom: 25px;
+}
+
+.reporte-seccion h2 {
+    font-size: 18px;
+    color: #2b6cb0;
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 5px;
+    margin-bottom: 15px;
+}
+
+.reporte-seccion p {
+    font-size: 14px;
+    line-height: 1.5;
+    margin-bottom: 10px;
+}
+
+.metricas-lista {
+    list-style-type: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.metricas-lista li {
+    background: #f7fafc;
+    border: 1px solid #e2e8f0;
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-size: 14px;
+    width: calc(50% - 15px);
+    box-sizing: border-box;
+}
+
+.tech-lista {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.tech-tag {
+    background: #edf2f7;
+    color: #2d3748;
+    padding: 5px 12px;
+    border-radius: 15px;
+    font-size: 13px;
+    font-weight: bold;
+    border: 1px solid #cbd5e0;
+}
+
+.seo-score {
+    font-size: 20px;
+    font-weight: bold;
+    color: #2f855a;
+    background: #f0fff4;
+    padding: 15px;
+    border-radius: 5px;
+    border-left: 5px solid #38a169;
+    display: inline-block;
+}
+
+.reporte-footer {
+    margin-top: 40px;
+    padding-top: 15px;
+    border-top: 1px solid #e2e8f0;
+    text-align: center;
+    font-size: 11px;
+    color: #718096;
 }

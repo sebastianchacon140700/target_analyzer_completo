@@ -34,6 +34,7 @@ let controladorAbort = null;
 let escaneoEnCurso = false;
 let imagenesTarget = [];
 let indiceImagenActual = 0;
+let ultimoAnalisis = null;
 const sndClick = new Audio('sonidos/click.mp3');
 const sndRadar = new Audio('sonidos/radar.mp3');
 const sndExito = new Audio('sonidos/exito.mp3');
@@ -283,6 +284,9 @@ function abortarOperacion() {
         panel.style.opacity = '1';
         panel.classList.remove("panel-bloqueado");
     });
+    // Error 3 Fix: ocultar el botón PDF al abortar para evitar exportar datos del escaneo anterior
+    const btnPdf = document.getElementById('btn-pdf');
+    if (btnPdf) btnPdf.style.display = 'none';
     escaneoEnCurso = false;
     controladorAbort = null;
     crearIconos();
@@ -322,6 +326,10 @@ async function iniciarOperacion() {
     `;
     botonEscaneo.classList.add('boton-escaneando');
     botonEscaneo.disabled = false;
+    
+    const btnPdf = document.getElementById('btn-pdf');
+    if (btnPdf) btnPdf.style.display = 'none';
+    
     crearIconos();
     sndAccion.currentTime = 0;
     sndRadarMilitar.currentTime = 0;
@@ -392,6 +400,7 @@ async function iniciarOperacion() {
             metricas: datos.metrics || {},
             language: datos.language || "[N/D]"
         };
+        ultimoAnalisis = analisis;
         imagenesTarget = analisis.imagenes
             .map(img => img?.src || img?.url || img)
             .filter(Boolean);
@@ -412,6 +421,11 @@ async function iniciarOperacion() {
         `;
         botonEscaneo.classList.remove('boton-escaneando');
         botonEscaneo.disabled = false;
+        
+        // Mostrar botón de PDF
+        const btnPdf = document.getElementById('btn-pdf');
+        if (btnPdf) btnPdf.style.display = 'inline-flex';
+
         escaneoEnCurso = false;
         controladorAbort = null;
         crearIconos();
@@ -823,6 +837,114 @@ if (btnAnterior) {
         }
 
         mostrarImagenActual();
+    });
+}
+
+const btnPdfGlobal = document.getElementById('btn-pdf');
+if (btnPdfGlobal) {
+    btnPdfGlobal.addEventListener('click', () => {
+        const urlObjetivo = document.getElementById('target-url').value;
+
+        // Error 4 Fix: extraer solo el dominio limpio para el nombre del archivo
+        let nombreDominio = 'INTELIGENCIA';
+        try {
+            nombreDominio = new URL(urlObjetivo).hostname.replace(/^www\./, '').replace(/\./g, '_');
+        } catch {}
+        const nombreArchivo = `REPORTE_${nombreDominio}.pdf`;
+
+        sndClick.currentTime = 0;
+        sndClick.play().catch(() => {});
+
+        if (!ultimoAnalisis) {
+            console.error("No hay análisis disponible para generar el reporte");
+            return;
+        }
+
+        // Llenar el molde con los datos del último análisis
+        document.getElementById('pdf-url').textContent = ultimoAnalisis.url;
+        document.getElementById('pdf-fecha').textContent = new Date().toLocaleString();
+        document.getElementById('pdf-titulo').textContent = ultimoAnalisis.titulo;
+        document.getElementById('pdf-descripcion').textContent = ultimoAnalisis.descripcion;
+        document.getElementById('pdf-idioma').textContent = ultimoAnalisis.language;
+        
+        document.getElementById('pdf-imagenes').textContent = ultimoAnalisis.metricas?.totalImages || 0;
+        document.getElementById('pdf-enlaces').textContent = ultimoAnalisis.metricas?.totalLinks || 0;
+        document.getElementById('pdf-scripts').textContent = ultimoAnalisis.metricas?.totalScripts || 0;
+        document.getElementById('pdf-css').textContent = ultimoAnalisis.metricas?.totalStylesheets || 0;
+        document.getElementById('pdf-forms').textContent = ultimoAnalisis.metricas?.forms || 0;
+        
+        const contenedorTech = document.getElementById('pdf-tech');
+        contenedorTech.innerHTML = '';
+        if (ultimoAnalisis.tecnologias && ultimoAnalisis.tecnologias.length > 0) {
+            ultimoAnalisis.tecnologias.forEach(tech => {
+                const span = document.createElement('span');
+                span.className = 'tech-tag';
+                span.textContent = tech;
+                contenedorTech.appendChild(span);
+            });
+        } else {
+            contenedorTech.textContent = 'No se detectaron tecnologías específicas.';
+        }
+
+        document.getElementById('pdf-seo').textContent = ultimoAnalisis.seo?.score || 0;
+
+        // Seleccionar el contenedor principal y el molde
+        const contenedorOculto = document.getElementById('contenedor-oculto-pdf');
+        const elemento = document.getElementById('plantilla-reporte-pdf');
+        
+        // Guardamos el estilo original
+        const estiloOriginal = contenedorOculto.style.cssText;
+        
+        // Lo hacemos "visible" para que html2pdf lo pueda renderizar,
+        // pero lo escondemos detrás de todo y con opacidad 0 para que no parpadee
+        contenedorOculto.style.display = 'block';
+        contenedorOculto.style.position = 'absolute';
+        contenedorOculto.style.top = '0';
+        contenedorOculto.style.left = '0';
+        contenedorOculto.style.zIndex = '-9999';
+        contenedorOculto.style.opacity = '0';
+        contenedorOculto.style.pointerEvents = 'none';
+
+        const opciones = {
+            margin:       10,
+            filename:     nombreArchivo,
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#ffffff', scrollY: 0 },
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+
+        // Error 2 Fix: deshabilitar botón durante la generación
+        const textoOriginal = btnPdfGlobal.innerHTML;
+        btnPdfGlobal.innerHTML = '<i data-lucide="loader"></i><span>[GENERANDO...]</span>';
+        btnPdfGlobal.classList.add('boton-escaneando');
+        btnPdfGlobal.disabled = true;
+        crearIconos();
+
+        // Generar PDF desde el elemento original ahora visible
+        html2pdf().set(opciones).from(elemento).save()
+            .then(() => {
+                // Restauramos a estado oculto (display: none)
+                contenedorOculto.style.cssText = estiloOriginal;
+                
+                btnPdfGlobal.innerHTML = textoOriginal;
+                btnPdfGlobal.classList.remove('boton-escaneando');
+                btnPdfGlobal.disabled = false;
+                crearIconos();
+                sndExito.currentTime = 0;
+                sndExito.play().catch(() => {});
+            })
+            .catch((err) => {
+                // Restauramos a estado oculto en caso de error
+                contenedorOculto.style.cssText = estiloOriginal;
+                
+                console.error('[PDF ERROR]', err);
+                btnPdfGlobal.innerHTML = textoOriginal;
+                btnPdfGlobal.classList.remove('boton-escaneando');
+                btnPdfGlobal.disabled = false;
+                crearIconos();
+                sndError.currentTime = 0;
+                sndError.play().catch(() => {});
+            });
     });
 }
 
